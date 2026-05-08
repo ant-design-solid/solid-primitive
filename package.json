@@ -1,0 +1,35 @@
+{
+  "name": "solid-primitives",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "npm run build:packages",
+    "build:packages": "turbo run build"
+  },
+  "packageManager": "pnpm@10.4.1",
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@rolldown-plugin/solid": "catalog:dev",
+    "@types/node": "catalog:types",
+    "@vitest/coverage-v8": "catalog:test",
+    "@vitest/ui": "catalog:test",
+    "jsdom": "catalog:test",
+    "prettier": "catalog:dev",
+    "solid-js": "catalog:dev",
+    "tsdown": "catalog:dev",
+    "turbo": "catalog:dev",
+    "typescript": "catalog:dev",
+    "unplugin-solid": "catalog:dev",
+    "vite": "catalog:dev",
+    "vite-plugin-solid": "catalog:dev",
+    "tinyglobby": "catalog:dev",
+    "vitest": "catalog:test"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
+  }
+}
