@@ -26,18 +26,17 @@
       "module": "./dist/index.mjs",
       "import": "./dist/index.mjs",
       "require": "./dist/index.js"
-    },
-    "./*": {
-      "types": "./dist/*.d.ts",
-      "import": "./dist/*.mjs",
-      "require": "./dist/*.js"
     }
   },
   "scripts": {
     "build": "tsdown"
   },
-  "peerDependencies": {
+  "dependencies": {
     "@s-primitives/shared": "workspace:^"
+  },
+  "peerDependencies": {
+    "@s-primitives/shared": "^0.1.0-beta.0",
+    "solid-js": "^1.9.12"
   },
   "author": "",
   "license": "ISC"

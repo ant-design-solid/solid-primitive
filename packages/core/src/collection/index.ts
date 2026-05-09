@@ -60,7 +60,7 @@ export function createShallowCollection<T extends CollectionTypes>(target: T): T
             canIterate && keyTrigger.dirty($OBJECT)
             keyTrigger.dirty(key)
           }
-          if (hasChanged) {
+          if (!hadKey || hasChanged) {
             canIterate && valueTrigger.dirty($OBJECT)
             valueTrigger.dirty(key)
           }

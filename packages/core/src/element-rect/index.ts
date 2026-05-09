@@ -1,7 +1,7 @@
 import { access, MaybeAccessor, MaybeElement } from '@s-primitives/shared'
 import { createEffect, createSignal, onMount } from 'solid-js'
 import { untrack } from 'solid-js/web'
-import { ConfigurableWindow, defaultWindow } from '../_configurable.ts'
+import { ConfigurableWindow, defaultWindow } from '../_configurable'
 import { useEventListener } from '../event-listener'
 import { createResizeObserver } from '../resize-observer'
 

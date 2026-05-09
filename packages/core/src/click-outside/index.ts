@@ -133,6 +133,7 @@ export function onClickOutside(
         event => {
           setTimeout(() => {
             const el = access(target)
+            if (!el) return
             let activeEl: Element | null = window.document.activeElement
             while (activeEl?.shadowRoot) {
               activeEl = activeEl.shadowRoot.activeElement

@@ -44,7 +44,6 @@ export function createTriggerCache<T>(
 export function createTriggerCache<T extends object>(
   mapConstructor: WeakMapConstructor | MapConstructor = Map,
 ): TriggerCache<T> {
-  // 闭包内的私有变量，外部绝对无法直接访问
   const cache: Map<T, InternalNode> = new (mapConstructor as any)();
 
   const track = (key: T) => {
@@ -56,7 +55,6 @@ export function createTriggerCache<T extends object>(
       const [$, $$] = createSignal(undefined, triggerOptions);
       cache.set(key, (node = { $, $$, n: 1 }));
     } else {
-      // 👇 极其干净，完全类型安全，没有 as any
       node.n++;
     }
 
