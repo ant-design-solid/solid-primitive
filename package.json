@@ -22,6 +22,7 @@
     "prettier": "catalog:dev",
     "solid-js": "catalog:dev",
     "tsdown": "catalog:dev",
+    "tsx": "catalog:dev",
     "turbo": "catalog:dev",
     "typescript": "catalog:dev",
     "unplugin-solid": "catalog:dev",
