@@ -4,8 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "npm run build:packages",
-    "build:packages": "turbo run build"
+    "build": "pnpm run build:packages",
+    "build:packages": "turbo run build",
+    "test": "pnpm run test:unit -- --run",
+    "test:unit": "vitest --project unit",
+    "test:cov": "vitest --project unit --coverage"
   },
   "packageManager": "pnpm@10.4.1",
   "author": "",
