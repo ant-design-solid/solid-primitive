@@ -1,8 +1,8 @@
+import { access, MaybeAccessor, useDebounce, useThrottle } from '@s-primitives/shared'
 import { batch, createSignal, onMount } from 'solid-js'
 import { createMutable, createStore } from 'solid-js/store'
 import { type ConfigurableWindow, defaultWindow } from '../_configurable'
 import { useEventListener } from '../event-listener'
-import { access, MaybeAccessor, useDebounce } from '@s-primitives/shared'
 
 export interface CreateScrollOptions extends ConfigurableWindow {
   /**
@@ -33,9 +33,9 @@ export interface CreateScrollOptions extends ConfigurableWindow {
   onStop?: (e: Event) => void
 
   /**
-   * @default { capture: false, passive: true }
+   * @default{ capture: false, passive: true }
    */
-  eventListenerOptions?: EventListenerOptions
+  eventListenerOptions?: AddEventListenerOptions
 
   /**
    * @default 'auto'
@@ -48,6 +48,14 @@ export interface CreateScrollOptions extends ConfigurableWindow {
 type ScrollTarget = HTMLElement | SVGElement | Window | Document | null | undefined
 
 const ARRIVED_STATE_THRESHOLD_PIXELS = 1
+
+function resolveScrollContainer(target: ScrollTarget) {
+  return (target as Window)?.document?.documentElement || (target as Document)?.documentElement || (target as Element)
+}
+
+function resolveScrollTarget(target: ScrollTarget, window: Window) {
+  return target instanceof Document ? target.defaultView || window : target
+}
 
 export function createScroll(element: MaybeAccessor<ScrollTarget>, options: CreateScrollOptions = {}) {
   const {
@@ -92,13 +100,16 @@ export function createScroll(element: MaybeAccessor<ScrollTarget>, options: Crea
   function scrollTo(_x: number | undefined, _y: number | undefined) {
     if (!window) return
     const el = access(element)
-    ;(el instanceof Document ? window.document.body : el)?.scroll({
+    const scrollTarget = resolveScrollTarget(el, window)
+    const scrollContainer = resolveScrollContainer(el)
+
+    scrollTarget?.scroll({
       top: _y ?? position.y,
       left: _x ?? position.x,
       behavior: access(behavior),
     })
-    const scrollContainer =
-      (el as Window)?.document?.documentElement || (el as Document)?.documentElement || (el as Element)
+
+    if (!scrollContainer) return
 
     batch(() => {
       setInternalX(scrollContainer.scrollLeft)
@@ -114,12 +125,16 @@ export function createScroll(element: MaybeAccessor<ScrollTarget>, options: Crea
     onStop?.(e)
   }
 
-  const onScrollEndDebounced = useDebounce(onScrollEnd, throttle + idle)
+  const onScrollEndDebounced = useDebounce(onScrollEnd, throttle + idle, {
+    leading: false,
+    trailing: true,
+  })
 
   const updateArrivedState = (target: ScrollTarget) => {
     if (!window) return
-    const el: Element =
-      (target as Window)?.document?.documentElement || (target as Document)?.documentElement || (target as Element)
+    const el = resolveScrollContainer(target)
+    if (!el) return
+
     const { display, flexDirection, direction } = window.getComputedStyle(el)
     const directionMultiple = direction === 'rtl' ? -1 : 1
 
@@ -170,16 +185,24 @@ export function createScroll(element: MaybeAccessor<ScrollTarget>, options: Crea
 
   const onScrollHandler = (e: Event) => {
     if (!window) return
-    const eventTarget: HTMLElement = (e.target as Document).documentElement ?? e.target
-
-    updateArrivedState(eventTarget)
+    updateArrivedState((e.currentTarget || e.target) as ScrollTarget)
 
     setIsScrolling(true)
     onScrollEndDebounced(e)
     onScroll?.(e)
   }
 
-  useEventListener(element, 'scroll', onScrollHandler, eventListenerOptions)
+  useEventListener(
+    element,
+    'scroll',
+    throttle
+      ? useThrottle(onScrollHandler, throttle, {
+          leading: false,
+          trailing: true,
+        })
+      : onScrollHandler,
+    eventListenerOptions,
+  )
 
   onMount(() => {
     try {
