@@ -1,63 +1,60 @@
-import { isMap } from "@solid-primitive/shared";
-import { createMutableCollection } from "../collection";
+import { createMutableCollection } from '../collection'
+import { isMap } from '../utils'
 
-export type CacheKey = any;
+export type CacheKey = any
 
 export type CreateMemoizeCache<Key, Value> = Key extends object
   ? Map<Key, Value> | WeakMap<Key, Value>
-  : Map<Key, Value>;
+  : Map<Key, Value>
 
 export interface CreateMemoizeReturn<Result, Args extends unknown[]> {
-  (...args: Args): Result;
+  (...args: Args): Result
 
-  load: (...args: Args) => Result;
+  load: (...args: Args) => Result
 
-  delete: (...args: Args) => void;
+  delete: (...args: Args) => void
 
-  clear: () => void;
+  clear: () => void
 
-  getKey: (...args: Args) => CacheKey;
+  getKey: (...args: Args) => CacheKey
 
-  cache: CreateMemoizeCache<CacheKey, Result>;
+  cache: CreateMemoizeCache<CacheKey, Result>
 }
 
 export interface CreateMemoizeOptions<Result, Args extends unknown[]> {
-  getKey?: (...args: Args) => CacheKey;
+  getKey?: (...args: Args) => CacheKey
 
-  cache?: CreateMemoizeCache<CacheKey, Result>;
+  cache?: CreateMemoizeCache<CacheKey, Result>
 }
 
 export function createMemoize<Result, Args extends unknown[]>(
   resolver: (...args: Args) => Result,
   options: CreateMemoizeOptions<Result, Args> = {},
 ): CreateMemoizeReturn<Result, Args> {
-  const cache: CreateMemoizeCache<CacheKey, Result> = createMutableCollection(
-    (options.cache as any) ?? new Map(),
-  );
+  const cache: CreateMemoizeCache<CacheKey, Result> = createMutableCollection((options.cache as any) ?? new Map())
 
-  const getKey = (...args: Args): CacheKey =>
-    options.getKey ? options.getKey(...args) : JSON.stringify(args);
+  const getKey = (...args: Args): CacheKey => (options.getKey ? options.getKey(...args) : JSON.stringify(args))
 
   const _load = (key: string | number, ...args: Args) => {
-    const value = resolver(...args);
-    cache.set(key, value);
-    return value;
-  };
+    const value = resolver(...args)
+    cache.set(key, value)
+    return value
+  }
 
-  const load = (...args: Args): Result => _load(getKey(...args), ...args);
+  const load = (...args: Args): Result => _load(getKey(...args), ...args)
 
   const deleteByArgs = (...args: Args): void => {
-    cache.delete(getKey(...args));
-  };
+    cache.delete(getKey(...args))
+  }
 
   const clear = (): void => {
-    isMap(cache) && cache.clear();
-  };
+    isMap(cache) && cache.clear()
+  }
 
   const memoized = Object.assign(
     (...args: Args): Result => {
-      const key = getKey(...args);
-      return cache.has(key) ? (cache.get(key) as Result) : _load(key, ...args);
+      const key = getKey(...args)
+      return cache.has(key) ? (cache.get(key) as Result) : _load(key, ...args)
     },
     {
       load,
@@ -66,7 +63,7 @@ export function createMemoize<Result, Args extends unknown[]>(
       getKey,
       cache,
     },
-  );
+  )
 
-  return memoized;
+  return memoized
 }
