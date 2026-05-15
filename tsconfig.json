@@ -21,9 +21,7 @@
     "lib": ["es2016", "dom"],
     "types": ["node"],
     "rootDir": ".",
-    "paths": {
-      "@s-primitives/shared": ["./packages/shared/src/index.ts"]
-    },
+    "paths": {},
     "isolatedDeclarations": false,
     "composite": true,
     "emitDeclarationOnly": true,
@@ -34,6 +32,6 @@
     "declarationDir": "./types",
     "skipDefaultLibCheck": true
   },
-  "include": ["*.ts", "*.d.ts", "packages", "playgrounds"],
-  "exclude": ["node_modules", "dist", "**/*.md", "packages/.test"]
+  "include": ["*.ts", "*.d.ts", "packages/*"],
+  "exclude": ["node_modules", "**/dist", "**/*.md"]
 }

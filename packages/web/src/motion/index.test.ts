@@ -1,23 +1,8 @@
-import { createRoot, createSignal } from 'solid-js'
+import { createSignal } from 'solid-js'
 import { describe, expect, it, vi } from 'vitest'
 import { createListMotion, createSwitchMotion, tween } from './index'
 
-function withRoot(run: () => void | Promise<void>): Promise<void> {
-  return new Promise((resolve, reject) => {
-    createRoot(dispose => {
-      Promise.resolve(run()).then(
-        () => {
-          dispose()
-          resolve()
-        },
-        error => {
-          dispose()
-          reject(error)
-        },
-      )
-    })
-  })
-}
+import { withRoot } from '../../../.test'
 
 const flush = () => Promise.resolve()
 
@@ -25,11 +10,7 @@ describe('tween', () => {
   it('结束帧前的插值不应超过目标值', async () => {
     const setSource = vi.fn()
 
-    const dateNow = vi
-      .spyOn(Date, 'now')
-      .mockReturnValueOnce(0)
-      .mockReturnValueOnce(0)
-      .mockReturnValueOnce(150)
+    const dateNow = vi.spyOn(Date, 'now').mockReturnValueOnce(0).mockReturnValueOnce(0).mockReturnValueOnce(150)
 
     try {
       await tween(setSource, 0, 100, {
@@ -109,4 +90,3 @@ describe('createListMotion', () => {
     })
   })
 })
-

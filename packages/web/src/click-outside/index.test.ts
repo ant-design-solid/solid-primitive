@@ -1,23 +1,7 @@
 import { createRoot } from 'solid-js'
 import { describe, expect, it, vi } from 'vitest'
 import { onClickOutside } from './index'
-
-function withRoot(run: () => void | Promise<void>): Promise<void> {
-  return new Promise((resolve, reject) => {
-    createRoot(dispose => {
-      Promise.resolve(run()).then(
-        () => {
-          dispose()
-          resolve()
-        },
-        error => {
-          dispose()
-          reject(error)
-        },
-      )
-    })
-  })
-}
+import { withRoot } from '../../../.test'
 
 const flush = () => Promise.resolve()
 
@@ -130,4 +114,3 @@ describe('onClickOutside', () => {
     })
   })
 })
-

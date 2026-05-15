@@ -1,33 +1,7 @@
 import { createRoot, createSignal } from 'solid-js'
 import { describe, expect, it } from 'vitest'
 import { createElementRect } from './index'
-
-function withRoot<T>(run: () => T | Promise<T>) {
-  return new Promise<T>((resolve, reject) => {
-    createRoot(dispose => {
-      let result: T | Promise<T>
-
-      try {
-        result = run()
-      } catch (error) {
-        dispose()
-        reject(error)
-        return
-      }
-
-      Promise.resolve(result).then(
-        value => {
-          dispose()
-          resolve(value)
-        },
-        error => {
-          dispose()
-          reject(error)
-        },
-      )
-    })
-  })
-}
+import { withRoot } from '../../../.test'
 
 function mockRect(element: HTMLElement, rect: Partial<DOMRect>) {
   element.getBoundingClientRect = () =>
