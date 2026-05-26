@@ -1,19 +1,12 @@
-import { createEffect, createRenderEffect } from "solid-js";
-import {
-  access,
-  isFunction,
-  MaybeAccessor,
-  toArray,
-  tryOnCleanup,
-  type MaybeArray,
-} from "@solid-primitive/shared";
+import { access, isFunction, MaybeAccessor, toArray, type MaybeArray } from '@solid-primitive/shared'
+import { createEffect, createRenderEffect, onCleanup } from 'solid-js'
 
 interface InferEventTarget<Events> {
-  addEventListener: (event: Events, fn?: any, options?: any) => any;
-  removeEventListener: (event: Events, fn?: any, options?: any) => any;
+  addEventListener: (event: Events, fn?: any, options?: any) => any
+  removeEventListener: (event: Events, fn?: any, options?: any) => any
 }
 
-export type EventListenerOptions = boolean | AddEventListenerOptions;
+export type EventListenerOptions = boolean | AddEventListenerOptions
 
 export type TargetWithEventMap =
   | Window
@@ -69,7 +62,7 @@ export type TargetWithEventMap =
   | XMLHttpRequest
   | XMLHttpRequestEventTarget
   | XMLHttpRequestUpload
-  | EventSource;
+  | EventSource
 
 export type EventMapOf<Target> =
   // 1. 顶级对象
@@ -185,7 +178,7 @@ export type EventMapOf<Target> =
                                                                                                       : Target extends MediaQueryList
                                                                                                         ? MediaQueryListEventMap
                                                                                                         : // 默认
-                                                                                                          never;
+                                                                                                          never
 
 export function makeEventListener<
   Target extends TargetWithEventMap,
@@ -196,7 +189,7 @@ export function makeEventListener<
   type: MaybeArray<EventType>,
   handler: (event: EventMap[EventType]) => void,
   options?: EventListenerOptions,
-): VoidFunction;
+): VoidFunction
 
 // Custom Events
 export function makeEventListener<
@@ -207,7 +200,7 @@ export function makeEventListener<
   type: MaybeArray<EventType>,
   handler: (event: EventMap[EventType]) => void,
   options?: EventListenerOptions,
-): VoidFunction;
+): VoidFunction
 
 export function makeEventListener(
   target: MaybeArray<EventTarget | InferEventTarget<string>>,
@@ -215,24 +208,22 @@ export function makeEventListener(
   handler: (event: Event) => void,
   options?: EventListenerOptions,
 ): VoidFunction {
-  const types = toArray(type);
-  const targets = toArray(target);
-  types.forEach((type) => {
-    targets.forEach((target) => {
-      target.addEventListener(type, handler, options);
-    });
-  });
+  const types = toArray(type)
+  const targets = toArray(target).filter(Boolean)
+  types.forEach(type => {
+    targets.forEach(target => {
+      target.addEventListener(type, handler, options)
+    })
+  })
 
   const off = () =>
-    types.forEach((type) => {
-      targets.forEach((target) => {
-        target.removeEventListener(type, handler, options);
-      });
-    });
+    types.forEach(type => {
+      targets.forEach(target => {
+        target.removeEventListener(type, handler, options)
+      })
+    })
 
-  tryOnCleanup(off);
-
-  return off;
+  return off
 }
 
 export function useEventListener<
@@ -244,42 +235,37 @@ export function useEventListener<
   type: MaybeAccessor<MaybeArray<EventType>>,
   handler: (event: EventMap[EventType]) => void,
   options?: EventListenerOptions,
-): void;
+): void
 
 // Custom Events
 export function useEventListener<
   EventMap extends Record<string, Event>,
   EventType extends keyof EventMap = keyof EventMap,
 >(
-  target: MaybeAccessor<
-    MaybeArray<EventTarget | InferEventTarget<EventType> | null | undefined>
-  >,
+  target: MaybeAccessor<MaybeArray<EventTarget | InferEventTarget<EventType> | null | undefined>>,
   type: MaybeAccessor<MaybeArray<EventType>>,
   handler: (event: EventMap[EventType]) => void,
   options?: EventListenerOptions,
-): void;
+): void
 
 export function useEventListener(
-  target: MaybeAccessor<
-    MaybeArray<EventTarget | InferEventTarget<string> | undefined | null>
-  >,
+  target: MaybeAccessor<MaybeArray<EventTarget | InferEventTarget<string> | undefined | null>>,
   type: MaybeAccessor<MaybeArray<string>>,
   handler: (event: Event) => void,
   options?: EventListenerOptions,
 ): void {
   const attach = () => {
-    const types = toArray(access(type));
-    const targets = toArray(access(target)).filter(Boolean) as (
-      | EventTarget
-      | InferEventTarget<string>
-    )[];
-    if (!types.length || !targets.length) return;
-    makeEventListener(targets, types, handler, options);
-  };
+    const types = toArray(access(type))
+    const targets = toArray(access(target)).filter(Boolean) as (EventTarget | InferEventTarget<string>)[]
+    if (!types.length || !targets.length) return
+    const off = makeEventListener(targets, types, handler, options)
+
+    onCleanup(off)
+  }
 
   if (isFunction(target) || isFunction(type)) {
-    createEffect(attach);
+    createEffect(attach)
   } else {
-    createRenderEffect(attach);
+    createRenderEffect(attach)
   }
 }
