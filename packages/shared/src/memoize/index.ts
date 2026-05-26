@@ -1,4 +1,4 @@
-import { createMutableCollection } from '../collection'
+import { createCollection } from '../collection'
 import { isMap } from '../utils'
 
 export type CacheKey = any
@@ -31,7 +31,7 @@ export function createMemoize<Result, Args extends unknown[]>(
   resolver: (...args: Args) => Result,
   options: CreateMemoizeOptions<Result, Args> = {},
 ): CreateMemoizeReturn<Result, Args> {
-  const cache: CreateMemoizeCache<CacheKey, Result> = createMutableCollection((options.cache as any) ?? new Map())
+  const cache: CreateMemoizeCache<CacheKey, Result> = createCollection((options.cache as any) ?? new Map())
 
   const getKey = (...args: Args): CacheKey => (options.getKey ? options.getKey(...args) : JSON.stringify(args))
 

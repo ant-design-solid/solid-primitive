@@ -1,21 +1,21 @@
 import { createEffect, createRoot } from 'solid-js'
 import { describe, expect, it, vi } from 'vitest'
-import { createMutableCollection } from './index'
+import { createCollection } from './index'
 import { withRoot } from '../../../.test'
 
 const flush = () => Promise.resolve()
 
-describe('createMutableCollection', () => {
+describe('createCollection', () => {
   it('应保留原生 collection 的 instanceof 语义', () => {
-    expect(createMutableCollection(new Map())).toBeInstanceOf(Map)
-    expect(createMutableCollection(new Set())).toBeInstanceOf(Set)
-    expect(createMutableCollection(new WeakMap())).toBeInstanceOf(WeakMap)
-    expect(createMutableCollection(new WeakSet())).toBeInstanceOf(WeakSet)
+    expect(createCollection(new Map())).toBeInstanceOf(Map)
+    expect(createCollection(new Set())).toBeInstanceOf(Set)
+    expect(createCollection(new WeakMap())).toBeInstanceOf(WeakMap)
+    expect(createCollection(new WeakSet())).toBeInstanceOf(WeakSet)
   })
 
   it('Map 应只触发被读取 key 的依赖', async () => {
     await withRoot(async () => {
-      const map = createMutableCollection(new Map<string, number>([['a', 1]]))
+      const map = createCollection(new Map<string, number>([['a', 1]]))
       const readA = vi.fn(() => map.get('a'))
       const readB = vi.fn(() => map.get('b'))
 
@@ -33,7 +33,7 @@ describe('createMutableCollection', () => {
 
   it('Map 新增 undefined 值应触发 values 迭代', async () => {
     await withRoot(async () => {
-      const map = createMutableCollection(new Map<string, number | undefined>())
+      const map = createCollection(new Map<string, number | undefined>())
       const readValues = vi.fn(() => [...map.values()])
 
       createEffect(readValues)
@@ -48,7 +48,7 @@ describe('createMutableCollection', () => {
 
   it('Set 重复 add 不应触发依赖，新增值应触发迭代依赖', async () => {
     await withRoot(async () => {
-      const set = createMutableCollection(new Set(['a']))
+      const set = createCollection(new Set(['a']))
       const readValues = vi.fn(() => [...set])
 
       createEffect(readValues)
@@ -68,7 +68,7 @@ describe('createMutableCollection', () => {
     await withRoot(async () => {
       const key = {}
       const otherKey = {}
-      const weakMap = createMutableCollection(new WeakMap<object, number>())
+      const weakMap = createCollection(new WeakMap<object, number>())
       const readKey = vi.fn(() => [weakMap.has(key), weakMap.get(key)])
 
       createEffect(readKey)

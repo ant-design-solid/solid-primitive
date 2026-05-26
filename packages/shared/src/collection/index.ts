@@ -15,14 +15,16 @@ interface Target {
 const $RAW = Symbol('$__raw')
 const $OBJECT = Symbol('$__object')
 
-export function createMutableCollection<T extends CollectionTypes>(target: T): T {
+const TYPES = ['Map', 'Set', 'WeakMap', 'WeakSet']
+
+export function createCollection<T extends CollectionTypes>(target: T): T {
   if (target[$RAW] || !Object.isExtensible(target)) {
     return target
   }
 
   const rawType = toRawType(target)
 
-  if (!['Map', 'Set', 'WeakMap', 'WeakSet'].includes(rawType)) {
+  if (!TYPES.includes(rawType)) {
     return target
   }
 
@@ -44,7 +46,7 @@ export function createMutableCollection<T extends CollectionTypes>(target: T): T
     get size() {
       canIterate && keyTrigger.track($OBJECT)
 
-      return (target as Set<any>).size
+      return (target as IterableCollections).size
     },
 
     set(this: MapTypes, key: unknown, value: any) {
@@ -60,10 +62,8 @@ export function createMutableCollection<T extends CollectionTypes>(target: T): T
             canIterate && keyTrigger.dirty($OBJECT)
             keyTrigger.dirty(key)
           }
-          if (!hadKey || hasChanged) {
-            canIterate && valueTrigger.dirty($OBJECT)
-            valueTrigger.dirty(key)
-          }
+          canIterate && valueTrigger.dirty($OBJECT)
+          valueTrigger.dirty(key)
         })
       }
       return this
@@ -108,48 +108,30 @@ export function createMutableCollection<T extends CollectionTypes>(target: T): T
     forEach(this: IterableCollections, callback: Function, thisArg?: unknown) {
       const observed = this
       const rawTarget = target as IterableCollections
-      if (canIterate) {
-        batch(() => {
-          keyTrigger.track($OBJECT)
-          !isSet && valueTrigger.track($OBJECT)
-        })
-      }
+      keyTrigger.track($OBJECT)
+      !isSet && valueTrigger.track($OBJECT)
 
       return rawTarget.forEach((value: unknown, key: unknown) => {
         return callback.call(thisArg, value, key, observed)
       })
     },
-    *keys(): MapIterator<any> {
+    keys() {
       keyTrigger.track($OBJECT)
-
-      for (const key of (target as IterableCollections).keys()) {
-        yield key
-      }
+      return (target as IterableCollections).keys()
     },
-    *values(): MapIterator<any> {
+    values() {
       valueTrigger.track($OBJECT)
-
-      for (const value of (target as IterableCollections).values()) {
-        yield value
-      }
+      return (target as IterableCollections).values()
     },
-    *entries(): MapIterator<any> {
+    entries() {
       keyTrigger.track($OBJECT)
       valueTrigger.track($OBJECT)
-
-      for (const entry of (target as IterableCollections).entries()) {
-        yield entry
-      }
+      return (target as IterableCollections).entries()
     },
-    *[Symbol.iterator](): IterableIterator<any> {
-      batch(() => {
-        keyTrigger.track($OBJECT)
-        !isSet && valueTrigger.track($OBJECT)
-      })
-
-      for (const entry of (target as IterableCollections)[Symbol.iterator]()) {
-        yield entry
-      }
+    [Symbol.iterator]() {
+      keyTrigger.track($OBJECT)
+      !isSet && valueTrigger.track($OBJECT)
+      return (target as IterableCollections)[Symbol.iterator]()
     },
   }
 
