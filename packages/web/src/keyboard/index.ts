@@ -512,7 +512,8 @@ export function makeKeyboard(options: MakeKeyboardOptions = {}) {
     sequence.push(eventCombo)
 
     for (const binding of getCandidates(eventCombo)) {
-      const matched = binding.combos.length === 1 ? matchCombo(eventCombo, binding.combos[0]) : sequence.matches(binding.combos)
+      const matched =
+        binding.combos.length === 1 ? matchCombo(eventCombo, binding.combos[0]) : sequence.matches(binding.combos)
       if (!matched) continue
 
       runBinding(binding, e)
@@ -566,15 +567,18 @@ export function makeKeyboard(options: MakeKeyboardOptions = {}) {
     })
   }
 
+  const off = targetWindow ? makeEventListener(targetWindow, 'keydown', handleKeyDown as EventListener) : noop
+
   const reset = (): void => {
     bindings.clear()
     lookup.clear()
     sequence.reset()
   }
 
-  targetWindow && makeEventListener(targetWindow, 'keydown', handleKeyDown as EventListener)
-
-  tryOnCleanup(reset)
+  tryOnCleanup(() => {
+    reset()
+    off()
+  })
 
   return { bind, unbind, trigger, reset }
 }
@@ -631,7 +635,9 @@ export function createShortcut(
 
       sequence.push(eventCombo)
 
-      const matched = combos.some(parts => (parts.length === 1 ? matchCombo(eventCombo, parts[0]) : sequence.matches(parts)))
+      const matched = combos.some(parts =>
+        parts.length === 1 ? matchCombo(eventCombo, parts[0]) : sequence.matches(parts),
+      )
       if (!matched) return
 
       runAction(action, bindingOptions, e)
