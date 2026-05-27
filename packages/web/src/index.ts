@@ -1,6 +1,6 @@
 export * from './click-outside'
 export * from './event-listener'
-export * from './raf-loop'
+export * from './raf-fn'
 export * from './scroll'
 export * from './scroll-lock'
 
@@ -16,4 +16,3 @@ export * from './element-rect'
 export * from './element-size'
 
 export * from './keyboard'
-

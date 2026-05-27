@@ -2,7 +2,7 @@ import { createSignal } from 'solid-js'
 import { ConfigurableWindow, defaultWindow } from '../_configurable'
 import { access, MaybeAccessor, tryOnCleanup } from '@solid-primitive/shared'
 
-export interface CreateRafLoopOptions extends ConfigurableWindow {
+export interface RafFnOptions extends ConfigurableWindow {
   /**
    * @default true
    */
@@ -19,9 +19,9 @@ export interface CreateRafLoopOptions extends ConfigurableWindow {
   once?: boolean
 }
 
-export function createRafLoop(
+export function useRafFn(
   fn: (arg: { timestamp: DOMHighResTimeStamp; delta: number }) => void | boolean,
-  options: CreateRafLoopOptions = {},
+  options: RafFnOptions = {},
 ) {
   const { window = defaultWindow, fpsLimit = null, once = false, immediate = true } = options
 
