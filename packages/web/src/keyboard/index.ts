@@ -475,18 +475,14 @@ export function makeKeyboard(options: MakeKeyboardOptions = {}) {
   }
 
   const getCandidates = (eventCombo: ParsedCombo): Binding[] => {
-    const candidates = new Map<string, Binding>()
+    const result: Binding[] = []
 
     for (const lookupKey of getEventLookupKeys(eventCombo)) {
       const bucket = lookup.get(lookupKey)
-      if (!bucket) continue
-
-      bucket.forEach((binding, id) => {
-        candidates.set(id, binding)
-      })
+      if (bucket) result.push(...bucket.values())
     }
 
-    return Array.from(candidates.values())
+    return result
   }
 
   const runBinding = (binding: Binding, event?: KeyboardEvent) => {
