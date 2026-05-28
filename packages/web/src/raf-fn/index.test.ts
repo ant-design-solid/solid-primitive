@@ -1,6 +1,6 @@
 import { createRoot } from 'solid-js'
 import { describe, expect, it, vi } from 'vitest'
-import { createRafLoop, type CreateRafLoopOptions } from './index'
+import { useRafFn, type RafFnOptions } from './index'
 
 function createFrameScheduler() {
   let nextId = 1
@@ -29,9 +29,9 @@ function createFrameScheduler() {
 }
 
 function withRafLoop(
-  options: CreateRafLoopOptions,
+  options: RafFnOptions,
   run: (context: {
-    raf: ReturnType<typeof createRafLoop>
+    raf: ReturnType<typeof useRafFn>
     scheduler: ReturnType<typeof createFrameScheduler>
     callback: ReturnType<typeof vi.fn>
   }) => void | Promise<void>,
@@ -45,7 +45,7 @@ function withRafLoop(
         cancelAnimationFrame: scheduler.cancel,
       } as unknown as Window
 
-      const raf = createRafLoop(callback, {
+      const raf = useRafFn(callback, {
         window: target,
         ...options,
       })
@@ -64,7 +64,7 @@ function withRafLoop(
   })
 }
 
-describe('createRafLoop', () => {
+describe('useRafFn', () => {
   it('默认应立即启动并在每帧执行回调', () => {
     return withRafLoop({}, ({ raf, scheduler, callback }) => {
       expect(raf.isActive()).toBe(true)
@@ -147,7 +147,7 @@ describe('createRafLoop', () => {
           cancelAnimationFrame: scheduler.cancel,
         } as unknown as Window
 
-        const raf = createRafLoop(callback, {
+        const raf = useRafFn(callback, {
           window: target,
         })
 
