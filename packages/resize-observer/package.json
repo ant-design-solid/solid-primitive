@@ -1,6 +1,6 @@
 {
-  "name": "@solid-primitive/shared",
-  "version": "0.1.0-beta.3",
+  "name": "@solid-primitive/resize-observer",
+  "version": "0.1.0-beta.1",
   "description": "solid primitives",
   "author": "Kory Lee <https://github.com/korylee>",
   "files": [
@@ -29,21 +29,10 @@
     "build": "tsdown"
   },
   "dependencies": {
-    "@solid-primitive/map": "workspace:^",
-    "@solid-primitive/set": "workspace:^",
-    "@solid-primitive/trigger": "workspace:^",
-    "@solid-primitive/utils": "workspace:^",
-    "@solid-primitive/memoize": "workspace:^",
-    "@solid-primitive/scheduler": "workspace:^"
+    "@solid-primitive/utils": "workspace:^"
   },
   "peerDependencies": {
-    "@solid-primitive/map": "^0.1.0-beta.1",
-    "@solid-primitive/set": "^0.1.0-beta.1",
-    "@solid-primitive/trigger": "^0.1.0-beta.1",
-    "solid-js": "^1.9.11",
-    "@solid-primitive/utils": "^0.1.0-beta.1",
-    "@solid-primitive/memoize": "^0.1.0-beta.1",
-    "@solid-primitive/scheduler": "^0.1.0-beta.1"
+    "solid-js": "^1.9.11"
   },
   "license": "ISC"
 }

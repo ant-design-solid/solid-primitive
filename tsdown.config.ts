@@ -6,7 +6,7 @@ import solid from 'unplugin-solid/rolldown'
 
 type ExternalItem = string | RegExp
 
-const baseExternals: ExternalItem[] = ['solid-js', /@solid-primitive\/.*/]
+const baseExternals: ExternalItem[] = ['solid-js']
 
 interface CreateTsDownConfigOptions {
   copy?: UserConfig['copy']

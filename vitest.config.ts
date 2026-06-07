@@ -1,6 +1,6 @@
-import { defineConfig } from 'vitest/config'
 import path, { resolve } from 'node:path'
 import solid from 'vite-plugin-solid'
+import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
   plugins: [solid({ hot: !process.env.VITEST })],
@@ -8,6 +8,10 @@ export default defineConfig({
     alias: {
       '@solid-primitive/web': path.resolve(import.meta.dirname, 'packages/web/src'),
       '@solid-primitive/shared': path.resolve(import.meta.dirname, 'packages/shared/src'),
+      '@solid-primitive/map': path.resolve(import.meta.dirname, 'packages/map/src'),
+      '@solid-primitive/set': path.resolve(import.meta.dirname, 'packages/set/src'),
+      '@solid-primitive/trigger': path.resolve(import.meta.dirname, 'packages/trigger/src'),
+      '@solid-primitive/utils': path.resolve(import.meta.dirname, 'packages/utils/src'),
     },
     dedupe: ['solid-js'],
   },

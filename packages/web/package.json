@@ -29,9 +29,20 @@
     "build": "tsdown"
   },
   "dependencies": {
-    "@solid-primitive/shared": "workspace:^"
+    "@solid-primitive/shared": "workspace:^",
+    "@solid-primitive/event-listener": "workspace:^",
+    "@solid-primitive/element-geometry": "workspace:^",
+    "@solid-primitive/keyboard": "workspace:^",
+    "@solid-primitive/click-outside": "workspace:^",
+    "@solid-primitive/scroll": "workspace:^",
+    "@solid-primitive/motion": "workspace:^",
+    "@solid-primitive/media": "workspace:^",
+    "@solid-primitive/resize-observer": "workspace:^",
+    "@solid-primitive/intersection-observer": "workspace:^"
   },
   "peerDependencies": {
+    "@solid-primitive/event-listener": "^0.1.0-beta.1",
+    "@solid-primitive/keyboard": "^0.1.0-beta.1",
     "solid-js": "^1.6.12"
   },
   "license": "ISC"
